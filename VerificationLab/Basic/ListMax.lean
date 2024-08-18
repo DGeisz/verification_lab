@@ -1,3 +1,36 @@
+import Mathlib
+
+syntax "return_with_proof" term : tactic
+
+macro_rules
+  | `(tactic| return_with_proof $a:term) => `(tactic| apply Subtype.mk (val := $a))
+
+def maxListVerified (l : List Nat) : {max : Nat // ∀ n : Nat, n ∈ l → n ≤ max} :=
+  match l with
+  | [] => by
+    return_with_proof 0
+    · intros
+      contradiction
+  | a :: as =>
+    let ⟨maxTail, maxTailProp⟩ := maxListVerified as
+
+    if _ : a > maxTail then by
+      return_with_proof a
+      · intro n h
+        cases h
+        case head => linarith
+        case tail n_in_as =>
+          apply Nat.le_trans (m := maxTail)
+          · exact maxTailProp n n_in_as
+          · linarith
+    else by
+      return_with_proof maxTail
+      · intro n h
+        cases h
+        case head => linarith
+        case tail n_in_as => exact maxTailProp n n_in_as
+
+-- This just creates the function and then proves it elsewhere
 def maxList (l : List Nat) : Nat :=
   match l with
   | [] => 0
