@@ -1,9 +1,5 @@
 import Mathlib
-
-syntax "return_with_proof" term : tactic
-
-macro_rules
-  | `(tactic| return_with_proof $a:term) => `(tactic| apply Subtype.mk (val := $a))
+import VerificationLab.Tactics
 
 def maxListVerified (l : List Nat) : {max : Nat // ∀ n : Nat, n ∈ l → n ≤ max} :=
   match l with

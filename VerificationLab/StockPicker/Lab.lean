@@ -1,0 +1,1 @@
+import VerificationLab.StockPicker.Snapshot
